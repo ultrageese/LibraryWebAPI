@@ -1,0 +1,107 @@
+База данных: 192.168.200.13, library_db
+Создать контроллеры со следующими методами по схеме:
+PS! У нас пока нет авторизации, так что все методы открытые
+Контроллеров много, так что надо упростить тестирование, ставим swagger:
+1. Ставим nuget Swashbuckle.AspNetCore
+2. Редактируем файл Program:
+До строки builder.Build():
+	builder.Services.AddEndpointsApiExplorer();
+	builder.Services.AddSwaggerGen();
+	
+Там где строка if (app.Environment.IsDevelopment()), меняем ее тело следующим образом
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+3. Открываем файл launchSettings.json:
+	ставим настройку "launchBrowser": true, и добавляем "launchUrl": "swagger",
+	
+
+ReadersController (Управление читателями)
+GET    /api/readers              // Список всех читателей
+GET    /api/readers/{id}         // Данные конкретного читателя
+POST   /api/readers              // Создание нового читателя
+PUT    /api/readers/{id}         // Обновление данных читателя
+DELETE /api/readers/{id}         // Деактивация читателя
+GET    /api/readers/{id}/cards   // Читательские билеты читателя
+GET    /api/readers/{id}/stats   // Статистика по читателю
+
+LibraryCardsController (Читательские билеты)
+GET    /api/cards                // Список всех билетов
+GET    /api/cards/{id}           // Данные билета
+POST   /api/cards                // Выдача нового билета
+PUT    /api/cards/{id}           // Обновление статуса билета
+POST   /api/cards/{id}/renew     // Продление билета
+GET    /api/cards/number/{number} // Поиск по номеру билета
+
+BooksController (Управление книгами)
+GET    /api/books                // Список книг с фильтрацией и пагинацией
+GET    /api/books/{id}           // Детальная информация о книге
+POST   /api/books                // Добавление новой книги (админ/библиотекарь)
+PUT    /api/books/{id}           // Обновление информации о книге
+DELETE /api/books/{id}           // Удаление книги
+GET    /api/books/search         // Поиск книг по параметрам
+GET    /api/books/isbn/{isbn}    // Поиск по ISBN
+GET    /api/books/popular        // Популярные книги
+GET    /api/books/new            // Новые поступления
+
+AuthorsController (Управление авторами)
+GET    /api/authors              // Список авторов
+GET    /api/authors/{id}         // Данные автора
+POST   /api/authors              // Добавление автора
+PUT    /api/authors/{id}         // Обновление данных автора
+DELETE /api/authors/{id}         // Удаление автора
+GET    /api/authors/{id}/books   // Книги автора
+
+GenresController (Жанры)
+GET    /api/genres               // Список всех жанров
+GET    /api/genres/{id}          // Данные жанра
+POST   /api/genres               // Добавление жанра
+PUT    /api/genres/{id}          // Обновление жанра
+DELETE /api/genres/{id}          // Удаление жанра
+GET    /api/genres/{id}/books    // Книги жанра
+
+BookCopiesController (Экземпляры книг)
+GET    /api/books/{bookId}/copies      // Экземпляры конкретной книги
+GET    /api/copies/{id}                // Данные экземпляра
+POST   /api/copies                     // Добавление экземпляра
+PUT    /api/copies/{id}                // Обновление экземпляра
+DELETE /api/copies/{id}                // Удаление экземпляра
+GET    /api/copies/available           // Доступные экземпляры
+PUT    /api/copies/{id}/condition      // Изменение состояния экземпляра
+
+BorrowingsController (Выдачи книг)
+GET    /api/borrowings                 // Список выдач (фильтрация по статусу)
+GET    /api/borrowings/{id}            // Данные конкретной выдачи
+POST   /api/borrowings                 // Оформление выдачи
+PUT    /api/borrowings/{id}/return     // Возврат книги
+PUT    /api/borrowings/{id}/renew      // Продление выдачи
+GET    /api/borrowings/active          // Активные выдачи
+GET    /api/borrowings/overdue         // Просроченные выдачи
+GET    /api/readers/{id}/borrowings    // Выдачи конкретного читателя
+
+ReservationsController (Резервирование)
+GET    /api/reservations               // Список резервов
+GET    /api/reservations/{id}          // Данные резерва
+POST   /api/reservations               // Создание резерва
+PUT    /api/reservations/{id}/cancel   // Отмена резерва
+PUT    /api/reservations/{id}/fulfill  // Выполнение резерва
+GET    /api/readers/{id}/reservations  // Резервы читателя
+GET    /api/books/{id}/reservations    // Резервы на книгу
+
+FinesController (Штрафы)
+GET    /api/fines                      // Список штрафов
+GET    /api/fines/{id}                 // Данные штрафа
+POST   /api/fines                      // Создание штрафа (автоматически или вручную)
+PUT    /api/fines/{id}/pay             // Оплата штрафа
+PUT    /api/fines/{id}/waive           // Списание штрафа
+GET    /api/readers/{id}/fines         // Штрафы читателя
+GET    /api/fines/unpaid               // Неоплаченные штрафы
+
+BorrowingHistoryController (История операций)
+GET    /api/history                    // Общая история операций
+GET    /api/history/{id}               // Детали операции
+GET    /api/readers/{id}/history       // История читателя
+GET    /api/books/{id}/history         // История книги
+GET    /api/history/statistics         // Статистика по операциям

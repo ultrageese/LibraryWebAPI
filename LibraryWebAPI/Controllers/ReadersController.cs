@@ -1,5 +1,6 @@
 ﻿using ClassLibrary1.Dto;
 using LibraryWebAPI.Context;
+using LibraryWebAPI.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,25 +18,44 @@ namespace LibraryWebAPI.Controllers
         }
 
         [HttpGet()]
-        public ActionResult<IEnumerable<ReaderDto>> GetReaders()
+        public ActionResult<IEnumerable<Reader>> GetReaders()
         {
             var readers = _context.Readers.ToList();
-            var retReaders = new List<ReaderDto>();
-            foreach (var reader in readers)
-            {
-                retReaders.Add((ReaderDto)reader);
-            }
-            return retReaders;
+            return readers;
         }
         [HttpGet("{id}")]
-        public ActionResult<ReaderDto> GetSingleReader(int id)
+        public ActionResult<Reader> GetSingleReader(int id)
         {
-            return (ReaderDto)_context.Readers.SingleOrDefault(s => s.ReaderId == id);
+            return _context.Readers.SingleOrDefault(s => s.ReaderId == id);
         }
         [HttpPost]
-        public ActionResult<ReaderDto> Create(ReaderDto reader)
+        public ActionResult<Reader> Create(Reader reader)
         {
+            if (reader != null)
+            {
+            _context.Readers.Add(reader);
+            _context.SaveChanges();
+            }
             return reader;
+        }
+        [HttpPut("{id}")]
+        public ActionResult<Reader> UpdateReader(int id, Reader reader)
+        {
+            if (reader != null)
+            {
+                _context.Readers.Update(reader);
+                _context.SaveChanges();
+            }
+            return reader;
+        }
+        [HttpDelete("{id}")]
+        public ActionResult<Reader> DeactivateReader(int id)
+        {
+            var reader = _context.Readers.SingleOrDefault(s => s.ReaderId == id);
+            reader.IsActive = false;
+            _context.SaveChanges();
+            return reader;
+
         }
     }
 }
